@@ -1,0 +1,8 @@
+/SE42_Les_8_Encryption/nbproject/private/
+/nbproject/private/
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
