@@ -6,7 +6,11 @@
 package se42_les_8_encryption;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.security.PublicKey;
 import java.security.Signature;
 import javafx.application.Application;
@@ -52,13 +56,15 @@ public class App2 extends Application {
      */
 public static void main(String[] args) {
  
-    args = new String[3];
+    String finalString;
+    args = new String[4];
+    args[3] = "Pjotter";
     args[2] = "test.txt";
     args[1] = "sig";
     args[0] = "suepk";
         /* Verify a DSA signature */
  
-        if (args.length != 3) {
+        if (args.length != 4) {
             System.out.println("Usage: VerSig publickeyfile signaturefile datafile");
             }
         else try{
@@ -93,18 +99,43 @@ public static void main(String[] args) {
             BufferedInputStream bufin = new BufferedInputStream(datafis);
  
             byte[] buffer = new byte[1024];
-            int len;
+            int len;            
             while (bufin.available() != 0) {
                 len = bufin.read(buffer);
                 sig.update(buffer, 0, len);
                 };
  
             bufin.close();
+            
+            byte[] realSig = sig.sign();
  
  
             boolean verifies = sig.verify(sigToVerify);
  
             System.out.println("signature verifies: " + verifies);
+            
+            
+            BufferedReader br = new BufferedReader(new FileReader(args[2]));
+            try{
+                StringBuilder sb = new StringBuilder();
+                String line = br.readLine();
+                while (line != null){
+                    sb.append(line);
+                    line = br.readLine();
+                }
+                finalString = sb.toString();
+            }
+            finally{
+                br.close();
+            }
+            
+            File file = new File(args[1]);
+            FileOutputStream fos = new FileOutputStream("input(SidnetBy" + args[3] + ")");
+            fos.write((int) file.length());
+            fos.write(realSig);
+            fos.write(finalString.getBytes());
+            
+            fos.close();
  
  
         }
